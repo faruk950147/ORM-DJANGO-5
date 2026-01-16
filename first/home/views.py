@@ -1,10 +1,23 @@
 from django.views import View
 from django.shortcuts import render
-from .models import University, Department
-
+from home.models import University, Department
+from django.db import connection
 
 class HomeView(View):
     def get(self, request):
         universities = University.objects.all()
         departments = Department.objects.all()
-        return render(request, 'home/home.html', {'universities': universities, 'departments': departments})
+
+        # Force query execution
+        list(universities)
+        list(departments)
+
+        # Print raw SQL queries
+        # print('Universities SQL:', universities.query)
+        # print('Departments SQL:', departments.query)
+        print('Database Queries Executed:', connection.queries)
+
+        return render(request, 'home/home.html', {
+            'universities': universities,
+            'departments': departments
+        })
