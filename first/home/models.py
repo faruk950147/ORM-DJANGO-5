@@ -12,6 +12,9 @@ class University(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name_plural = "01. Universities"
+    
     def __str__(self):
         return self.name
 
@@ -20,6 +23,11 @@ class Department(models.Model):
     name = models.CharField(max_length=255)
     head_of_department = models.CharField(max_length=255, null=True, blank=True)
     established_year = models.IntegerField(default=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name_plural = "02. Departments"
+        
     def __str__(self):
         return f"{self.name} - {self.university.name}"
