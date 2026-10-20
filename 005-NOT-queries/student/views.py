@@ -1,7 +1,9 @@
+
 from django.shortcuts import render
 from .models import Student, Teacher
 from django.db import connection
 from django.db.models import Q
+
 
 # Part 2
 #################################################################
@@ -10,31 +12,50 @@ from django.db.models import Q
 # Simple OR
 ################
 
-def student_list_(request):
+# Example 1: All Students
 
-    posts = Student.objects.all()
+# def student_list_(request):
+#
+#     posts = Student.objects.all()
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    print(posts)
-    print(posts.query)
-    print(connection.queries)
 
-    return render(request, 'output.html',{'posts':posts})
+# Example 2: OR using |
 
-def student_list_(request):
-    posts = Student.objects.filter(surname__startswith='austin') | Student.objects.filter(surname__startswith='baldwin')
+# def student_list_(request):
+#
+#     posts = (
+#         Student.objects.filter(surname__startswith='austin')
+#         | Student.objects.filter(surname__startswith='baldwin')
+#     )
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    print(posts)
-    print(connection.queries)
 
-    return render(request, 'output.html',{'posts':posts})
+# Example 3: OR and NOT using Q()
 
-def student_list_(request):
-    posts = Student.objects.filter(Q(surname__startswith='austin') | ~Q (surname__startswith='baldwin') | Q (surname__startswith='avery-parker'))
-
-    print(posts)
-    print(connection.queries)
-
-    return render(request, 'output.html',{'posts':posts})
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(
+#         Q(surname__startswith='austin')
+#         | ~Q(surname__startswith='baldwin')
+#         | Q(surname__startswith='avery-parker')
+#     )
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
 
 # Part 3
@@ -44,21 +65,37 @@ def student_list_(request):
 # Simple AND
 ################
 
-def student_list_(request):
-    posts = Student.objects.filter(classroom=1) & Student.objects.filter(age=20)
+# Example 4: AND using &
 
-    print(posts)
-    print(connection.queries)
+# def student_list_(request):
+#
+#     posts = (
+#         Student.objects.filter(classroom=1)
+#         & Student.objects.filter(age=20)
+#     )
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    return render(request, 'output.html',{'posts':posts})
 
-def student_list_(request):
-    posts = Student.objects.filter(Q(surname__startswith='baldwin')&Q(firstname__startswith='lakisha'))
+# Example 5: AND using Q()
 
-    print(posts)
-    print(connection.queries)
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(
+#         Q(surname__startswith='baldwin')
+#         & Q(firstname__startswith='lakisha')
+#     )
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    return render(request, 'output.html',{'posts':posts})
 
 # Part 4
 #################################################################
@@ -67,13 +104,22 @@ def student_list_(request):
 # Simple UNION
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     posts = (
+#         Student.objects.all()
+#         .values_list('firstname')
+#         .union(
+#             Teacher.objects.all().values_list('firstname')
+#         )
+#     )
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    posts = Student.objects.all().values_list("firstname").union(Teacher.objects.all().values_list("firstname"))
-
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
 
 # Part 5
 #################################################################
@@ -82,23 +128,35 @@ def student_list_(request):
 # Simple EXCLUDE
 ################
 
-def student_list_(request):
+# Example 6: Exclude students whose age is greater than 19
 
-    posts = Student.objects.exclude(age__gt=19)
+# def student_list_(request):
+#
+#     posts = Student.objects.exclude(age__gt=19)
+#
+#     # gt  = greater than
+#     # gte = greater than or equal to
+#     # lt  = less than
+#     # lte = less than or equal to
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    # gt
-    # gte
-    # lt
-    # lte
 
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
+# Example 7: NOT conditions using Q()
 
 def student_list(request):
 
-    posts = Student.objects.filter(~Q(age__gt=20)&~Q(surname__startswith='baldwin'))
+    posts = Student.objects.filter(
+        ~Q(age__gt=20) &
+        ~Q(surname__startswith='baldwin')
+    )
 
     print(posts)
+    print(posts.query)
     print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
+
+    return render(request, 'output.html', {'posts': posts})

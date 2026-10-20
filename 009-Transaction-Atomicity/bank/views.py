@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import Payment
@@ -17,18 +18,19 @@ def process_payment(request):
       y = form.cleaned_data['payee']
       z = decimal.Decimal(form.cleaned_data['amount'])
 
-      payor = customer.objects.select_for_update().get(name=x)
-      payee = customer.objects.select_for_update().get(name=y)
+      with transaction.atomic():
 
-    with transaction.atomic():
-      payor.balance -= z
-      payor.save()
+        payor = customer.objects.select_for_update().get(name=x)
+        payee = customer.objects.select_for_update().get(name=y)
 
-      payee.balance += z
-      payee.save()
+        payor.balance -= z
+        payor.save()
 
-      # customer.objects.filter(name=x).update(balance=F('balance') - z)
-      # customer.objects.filter(name=y).update(balance=F('balance') + z)
+        payee.balance += z
+        payee.save()
+
+        # customer.objects.filter(name=x).update(balance=F('balance') - z)
+        # customer.objects.filter(name=y).update(balance=F('balance') + z)
 
       return HttpResponseRedirect('/')
 

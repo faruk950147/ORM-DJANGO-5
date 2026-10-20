@@ -1,7 +1,9 @@
+
 from django.shortcuts import render
 from .models import Student, Teacher
 from django.db import connection
 from django.db.models import Q
+
 
 # Part 2
 #################################################################
@@ -10,31 +12,39 @@ from django.db.models import Q
 # Simple OR
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     posts = Student.objects.all()
+#
+#     print(posts)
+#     print(posts.query)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    posts = Student.objects.all()
 
-    print(posts)
-    print(posts.query)
-    print(connection.queries)
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(surname__startswith='austin') | Student.objects.filter(surname__startswith='baldwin')
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    return render(request, 'output.html',{'posts':posts})
 
-def student_list_(request):
-    posts = Student.objects.filter(surname__startswith='austin') | Student.objects.filter(surname__startswith='baldwin')
-
-    print(posts)
-    print(connection.queries)
-
-    return render(request, 'output.html',{'posts':posts})
-
-def student_list_(request):
-    posts = Student.objects.filter(Q(surname__startswith='austin') | ~Q (surname__startswith='baldwin') | Q (surname__startswith='avery-parker'))
-
-    print(posts)
-    print(connection.queries)
-
-    return render(request, 'output.html',{'posts':posts})
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(
+#         Q(surname__startswith='austin') |
+#         ~Q(surname__startswith='baldwin') |
+#         Q(surname__startswith='avery-parker')
+#     )
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
 
 # Part 3
@@ -44,21 +54,28 @@ def student_list_(request):
 # Simple AND
 ################
 
-def student_list_(request):
-    posts = Student.objects.filter(classroom=1) & Student.objects.filter(age=20)
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(classroom=1) & Student.objects.filter(age=20)
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    print(posts)
-    print(connection.queries)
 
-    return render(request, 'output.html',{'posts':posts})
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(
+#         Q(surname__startswith='baldwin') &
+#         Q(firstname__startswith='lakisha')
+#     )
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-def student_list_(request):
-    posts = Student.objects.filter(Q(surname__startswith='baldwin')&Q(firstname__startswith='lakisha'))
-
-    print(posts)
-    print(connection.queries)
-
-    return render(request, 'output.html',{'posts':posts})
 
 # Part 4
 #################################################################
@@ -67,13 +84,19 @@ def student_list_(request):
 # Simple UNION
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     posts = Student.objects.all().values_list(
+#         "firstname", flat=False
+#     ).union(
+#         Teacher.objects.all().values_list("firstname", flat=False)
+#     )
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    posts = Student.objects.all().values_list("firstname").union(Teacher.objects.all().values_list("firstname"))
-
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
 
 # Part 5
 #################################################################
@@ -82,41 +105,52 @@ def student_list_(request):
 # Simple EXCLUDE
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     posts = Student.objects.exclude(age__gt=19)
+#
+#     # gt  = greater than
+#     # gte = greater than or equal to
+#     # lt  = less than
+#     # lte = less than or equal to
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    posts = Student.objects.exclude(age__gt=19)
 
-    # gt
-    # gte
-    # lt
-    # lte
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(
+#         ~Q(age__gt=20) &
+#         ~Q(surname__startswith='baldwin')
+#     )
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'posts': posts})
 
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
-
-def student_list_(request):
-
-    posts = Student.objects.filter(~Q(age__gt=20)&~Q(surname__startswith='baldwin'))
-
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'posts': posts})
 
 # Part 6
 #################################################################
 
 ################
-# SELECT & OUTPUT INDIVIDUAL FILEDS
+# SELECT & OUTPUT INDIVIDUAL FIELDS
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     posts = Student.objects.filter(classroom=1).only(
+#         'firstname', 'age'
+#     )
+#
+#     print(posts)
+#     print(connection.queries)
+#
+#     return render(request, 'output.html', {'data': posts})
 
-    posts = Student.objects.filter(classroom=1).only('firstname','age')
-
-    print(posts)
-    print(connection.queries)
-    return render(request,'output.html',{'data': posts})
 
 # Part 7
 #################################################################
@@ -125,16 +159,15 @@ def student_list_(request):
 # Simple PERFORMING RAW QUERIES
 ################
 
-def student_list_(request):
+# def student_list_(request):
+#
+#     sql = "SELECT * FROM student_student"
+#     posts = Student.objects.raw(sql)[:2]
+#
+#     print(posts)
+#
+#     return render(request, 'output.html', {'data': posts})
 
-    # posts = Student.objects.all()
-
-    sql = "SELECT * FROM student_student"
-    posts = Student.objects.raw(sql)[:2]
-
-    print(posts)
-    #print(connection.queries)
-    return render(request,'output.html',{'data': posts})
 
 # Part 8
 #################################################################
@@ -143,19 +176,27 @@ def student_list_(request):
 # Simple BYPASSING ORM
 ################
 
-def dictfetchall(cursor): 
-    desc = cursor.description 
+def dictfetchall(cursor):
+
+    desc = cursor.description
+
     return [
-            dict(zip([col[0] for col in desc], row)) 
-            for row in cursor.fetchall() 
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
     ]
+
 
 def student_list(request):
 
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM student_student WHERE age > 20")
+
+    cursor.execute(
+        "SELECT * FROM student_student WHERE age > %s",
+        [20]
+    )
+
     r = dictfetchall(cursor)
 
     print(connection.queries)
 
-    return render(request,'output.html',{'data': r})
+    return render(request, 'output.html', {'data': r})
